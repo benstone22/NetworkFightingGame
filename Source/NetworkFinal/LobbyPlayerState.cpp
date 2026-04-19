@@ -1,4 +1,5 @@
 #include "LobbyPlayerState.h"
+#include "LobbyGameMode.h"
 #include "Net/UnrealNetwork.h"
 
 void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -12,6 +13,13 @@ void ALobbyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 void ALobbyPlayerState::ServerSetReady_Implementation(bool bReadyState)
 {
     bIsReady = bReadyState;
+
+    UE_LOG(LogTemp, Log, TEXT("ServerSetReady called for %s: bIsReady=%d"), *GetPlayerName(), bIsReady);
+
+    if (ALobbyGameMode* GM = GetWorld()->GetAuthGameMode<ALobbyGameMode>())
+    {
+        GM->CheckStartConditions();
+    }
 }
 
 void ALobbyPlayerState::OnRep_bIsReady()

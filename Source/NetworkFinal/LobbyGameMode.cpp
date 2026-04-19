@@ -23,16 +23,15 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 
 void ALobbyGameMode::Logout(AController* Exiting)
 {
-    Super::Logout(Exiting);
+  Super::Logout(Exiting);
 
-    // If PlayerX leaves, end the session for everyone
     ALobbyPlayerState* PS = Exiting->GetPlayerState<ALobbyPlayerState>();
-    if (PS && PS->LobbyRole == ELobbyRole::PlayerX)
+    if (PS && PS->LobbyRole == ELobbyRole::PlayerX && !Exiting->IsLocalController())
     {
         for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
         {
             APlayerController* PC = It->Get();
-            if (PC)
+            if (PC && PC != Exiting)
             {
                 PC->ClientReturnToMainMenuWithTextReason(FText::FromString("Host left the game."));
             }
@@ -66,16 +65,28 @@ void ALobbyGameMode::CheckStartConditions()
     bool bXReady = false;
     bool bOReady = false;
 
+    if (!GameState)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("CheckStartConditions: GameState is null"));
+        return;
+    }
+
     for (APlayerState* P : GameState->PlayerArray)
     {
         ALobbyPlayerState* LPS = Cast<ALobbyPlayerState>(P);
         if (!LPS) continue;
         if (LPS->LobbyRole == ELobbyRole::PlayerX && LPS->bIsReady) bXReady = true;
         if (LPS->LobbyRole == ELobbyRole::PlayerO && LPS->bIsReady) bOReady = true;
+        UE_LOG(LogTemp, Log, TEXT("CheckStartConditions: %s role=%d ready=%d"), *LPS->GetPlayerName(), (int32)LPS->LobbyRole, LPS->bIsReady);
     }
 
     if (bXReady && bOReady)
     {
-        GetWorld()->ServerTravel("/Game/Maps/TicTacToeMap?listen");
+        UE_LOG(LogTemp, Log, TEXT("Both players ready, traveling to TicTacToe"));
+        GetWorld()->ServerTravel(TEXT("/Game/Levels/TicTacToe?listen"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("Not ready yet: X=%d O=%d"), bXReady, bOReady);
     }
 }
