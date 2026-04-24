@@ -102,6 +102,15 @@ ETicTacToeCell ATicTacToeGameState::CheckWinner()
 void ATicTacToeGameState::OnRep_Board()
 {
     OnBoardUpdated();
+
+    for (TActorIterator<ATicTacToeCell> It(GetWorld()); It; ++It)
+    {
+        ATicTacToeCell* Cell = *It;
+        if (Cell && Board.IsValidIndex(Cell->CellIndex))
+        {
+            Cell->CellState = Board[Cell->CellIndex];
+        }
+    }
 }
 
 

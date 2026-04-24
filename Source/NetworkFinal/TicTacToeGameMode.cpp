@@ -2,20 +2,30 @@
 #include "TicTacToeGameState.h"
 #include "LobbyPlayerState.h"
 #include "GameFramework/PlayerController.h"
+#include "TicTacToePlayerController.h"
 
 ATicTacToeGameMode::ATicTacToeGameMode()
 {
     GameStateClass = ATicTacToeGameState::StaticClass();
+    PlayerControllerClass = ATicTacToePlayerController::StaticClass();  // ADD THIS
 }
 
 void ATicTacToeGameMode::PostLogin(APlayerController* NewPlayer)
 {
     Super::PostLogin(NewPlayer);
+
+    if (NewPlayer)
+    {
+        NewPlayer->bShowMouseCursor = true;
+        NewPlayer->bEnableClickEvents = true;
+        NewPlayer->bEnableMouseOverEvents = true;
+    }
 }
 void ATicTacToeGameMode::BeginPlay()
 {
     Super::BeginPlay();
     SpawnBoard();
+    SyncAllCells(); 
 }
 
 void ATicTacToeGameMode::SpawnBoard()
@@ -76,6 +86,36 @@ void ATicTacToeGameMode::HandleMove(APlayerController* Player, int32 CellIndex)
     else
         return; // spectators can't move
 
-    // Make the move
-    GS->MakeMove(CellIndex, PlayerCell);
+     // Make the move on GameState
+    if (GS->MakeMove(CellIndex, PlayerCell))
+    {
+        // SYNC: Update the cell actor's state
+        SyncAllCells(); 
+
+        if (GS->bGameOver)
+    {
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            ATicTacToePlayerController* PC = Cast<ATicTacToePlayerController>(It->Get());
+            if (PC)
+            {
+                PC->ClientGameOver(GS->Winner);
+            }
+        }
+    }
+    }
+}
+
+void ATicTacToeGameMode::SyncAllCells()
+{
+    ATicTacToeGameState* GS = GetGameState<ATicTacToeGameState>();
+    if (!GS) return;
+
+    for (int32 i = 0; i < Cells.Num(); i++)
+    {
+        if (Cells[i])
+        {
+            Cells[i]->CellState = GS->Board[i];
+        }
+    }
 }

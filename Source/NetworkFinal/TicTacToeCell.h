@@ -43,9 +43,12 @@ protected:
     virtual void BeginPlay() override;
 
     // Click detection component
-    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     class UBoxComponent* ClickBox;
 
-    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
     class UStaticMeshComponent* CellMesh;
+
+    UPROPERTY()
+    class ATicTacToeGameState* GameState;
 };
