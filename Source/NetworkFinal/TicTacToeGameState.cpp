@@ -1,5 +1,7 @@
 #include "TicTacToeGameState.h"
 #include "Net/UnrealNetwork.h"
+#include "TicTacToeCell.h"
+#include "EngineUtils.h"
 
 ATicTacToeGameState::ATicTacToeGameState()
 {
