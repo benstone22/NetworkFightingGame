@@ -23,6 +23,7 @@ public:
 
 private:
     void SpawnBoard();
+    void SyncAllCells();
 
     UPROPERTY()
     TArray<ATicTacToeCell*> Cells;

@@ -16,4 +16,10 @@ public:
     // Called by client when they click a cell
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerMakeMove(int32 CellIndex);
+
+    UFUNCTION(Client, Reliable)
+void ClientGameOver(ETicTacToeCell Winner);
+
+UFUNCTION(Server, Reliable)
+void ServerReturnToLobby();
 };

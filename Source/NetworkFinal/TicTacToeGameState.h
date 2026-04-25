@@ -48,6 +48,10 @@ public:
     // Check if someone won
     ETicTacToeCell CheckWinner();
 
+    // Get the state of a specific cell (for UI widgets)
+    UFUNCTION(BlueprintCallable, BlueprintPure, Category = "TicTacToe")
+    ETicTacToeCell GetCellState(int32 CellIndex) const;
+
     // RepNotify functions
     UFUNCTION()
     void OnRep_Board();

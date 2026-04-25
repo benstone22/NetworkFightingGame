@@ -99,9 +99,29 @@ ETicTacToeCell ATicTacToeGameState::CheckWinner()
 
     return ETicTacToeCell::Empty;
 }
+
+ETicTacToeCell ATicTacToeGameState::GetCellState(int32 CellIndex) const
+{
+    if (Board.IsValidIndex(CellIndex))
+    {
+        return Board[CellIndex];
+    }
+    return ETicTacToeCell::Empty;
+}
+
 void ATicTacToeGameState::OnRep_Board()
 {
     OnBoardUpdated();
+
+    for (TActorIterator<ATicTacToeCell> It(GetWorld()); It; ++It)
+    {
+        ATicTacToeCell* Cell = *It;
+        if (Cell && Board.IsValidIndex(Cell->CellIndex))
+        {
+            Cell->CellState = Board[Cell->CellIndex];
+            Cell->UpdateVisual(Board[Cell->CellIndex]);
+        }
+    }
 }
 
 

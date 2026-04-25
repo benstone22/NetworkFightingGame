@@ -22,9 +22,16 @@ void ATicTacToeCell::BeginPlay()
 {
     Super::BeginPlay();
 
+    GameState = GetWorld()->GetGameState<ATicTacToeGameState>();  
+
+
     // Enable click events
-    CellMesh->OnClicked.AddDynamic(this, &ATicTacToeCell::OnCellClicked);
     CellMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    CellMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+    CellMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
+    CellMesh->OnClicked.AddDynamic(this, &ATicTacToeCell::OnCellClicked);
+    
+    
 }
 
 void ATicTacToeCell::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -54,5 +61,11 @@ void ATicTacToeCell::OnRep_CellIndex()
 void ATicTacToeCell::OnRep_CellState()
 {
     // Tell Blueprint to update the visual
+    UE_LOG(LogTemp, Warning, TEXT("OnRep_CellState called for cell %d, new state: %d"), CellIndex, (int32)CellState);
+    
+   if (GameState && GameState->Board.IsValidIndex(CellIndex))
+    {
+        CellState = GameState->Board[CellIndex];
+    }
     UpdateVisual(CellState);
 }
