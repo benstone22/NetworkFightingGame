@@ -26,5 +26,11 @@ private:
     void SyncAllCells();
 
     UPROPERTY()
+    ATicTacToePlayerController* PlayerXController = nullptr;
+
+    UPROPERTY()
+    ATicTacToePlayerController* PlayerOController = nullptr;
+
+    UPROPERTY()
     TArray<ATicTacToeCell*> Cells;
 };

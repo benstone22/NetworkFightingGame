@@ -2,6 +2,7 @@
 #include "LobbyPlayerState.h"
 #include "LobbyGameState.h"
 #include "GameFramework/PlayerController.h"
+#include "TicTacToePlayerController.h"
 
 ALobbyGameMode::ALobbyGameMode()
 {
@@ -83,6 +84,8 @@ void ALobbyGameMode::CheckStartConditions()
     if (bXReady && bOReady)
     {
         UE_LOG(LogTemp, Log, TEXT("Both players ready, traveling to TicTacToe"));
+        
+        
         GetWorld()->ServerTravel(TEXT("/Game/Levels/TicTacToe?listen"));
     }
     else

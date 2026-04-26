@@ -13,6 +13,9 @@ class NETWORKFINAL_API ATicTacToePlayerController : public APlayerController
 
 public:
 
+    UPROPERTY()
+    ELobbyRole PendingRole = ELobbyRole::Spectator;
+
     // Called by client when they click a cell
     UFUNCTION(BlueprintCallable, Server, Reliable)
     void ServerMakeMove(int32 CellIndex);

@@ -3,6 +3,7 @@
 #include "LobbyPlayerState.h"
 #include "GameFramework/PlayerController.h"
 #include "TicTacToePlayerController.h"
+//#include "TicTacToePl"
 
 ATicTacToeGameMode::ATicTacToeGameMode()
 {
@@ -13,6 +14,7 @@ ATicTacToeGameMode::ATicTacToeGameMode()
 
 void ATicTacToeGameMode::PostLogin(APlayerController* NewPlayer)
 {
+    UE_LOG(LogTemp, Warning, TEXT("=== C++ PostLogin called ==="));
     Super::PostLogin(NewPlayer);
 
     if (NewPlayer)
@@ -21,6 +23,23 @@ void ATicTacToeGameMode::PostLogin(APlayerController* NewPlayer)
         NewPlayer->bEnableClickEvents = true;
         NewPlayer->bEnableMouseOverEvents = true;
     }
+
+    ATicTacToePlayerController* PC = Cast<ATicTacToePlayerController>(NewPlayer);
+    if (!PC) return;
+
+    if (PlayerXController == nullptr)
+    {
+        PlayerXController = PC;
+        PC->PendingRole = ELobbyRole::PlayerX;
+        UE_LOG(LogTemp, Warning, TEXT("PostLogin: %s assigned PlayerX"), *PC->GetName());
+    }
+    else
+    {
+        PlayerOController = PC;
+        PC->PendingRole = ELobbyRole::PlayerO;
+        UE_LOG(LogTemp, Warning, TEXT("PostLogin: %s assigned PlayerO"), *PC->GetName());
+    }
+    
 }
 void ATicTacToeGameMode::BeginPlay()
 {
@@ -71,7 +90,13 @@ void ATicTacToeGameMode::HandleMove(APlayerController* Player, int32 CellIndex)
     // Only runs on server
     if (!HasAuthority()) return;
 
+    UE_LOG(LogTemp, Warning, TEXT("HandleMove: Cell %d, Cells array size: %d"), CellIndex, Cells.Num());
+
+
     UE_LOG(LogTemp, Warning, TEXT("HandleMove called for cell %d"), CellIndex);
+
+    ATicTacToePlayerController* PC = Cast<ATicTacToePlayerController>(Player);
+    if (!PC) return;
 
     ATicTacToeGameState* GS = GetGameState<ATicTacToeGameState>();
     if (!GS) 
@@ -80,21 +105,27 @@ void ATicTacToeGameMode::HandleMove(APlayerController* Player, int32 CellIndex)
         return;
     }
 
-    // Get this player's role from LobbyPlayerState
-    ALobbyPlayerState* PS = Player->GetPlayerState<ALobbyPlayerState>();
-    if (!PS) return;
+    
+    
 
     // Map role to cell type
     ETicTacToeCell PlayerCell = ETicTacToeCell::Empty;
-    if (PS->LobbyRole == ELobbyRole::PlayerX)
+    if (PC->PendingRole == ELobbyRole::PlayerX)
         PlayerCell = ETicTacToeCell::X;
-    else if (PS->LobbyRole == ELobbyRole::PlayerO)
+    else if (PC->PendingRole == ELobbyRole::PlayerO)
         PlayerCell = ETicTacToeCell::O;
     else
         return; // spectators can't move
 
+    bool bMoved = GS->MakeMove(CellIndex, PlayerCell);
+    UE_LOG(LogTemp, Warning, TEXT("MakeMove returned: %s, PS=%s, Role=%d, PlayerCell=%d, CurrentTurn=%d"),
+        bMoved ? TEXT("true") : TEXT("false"),
+        (int32)PC->PendingRole,
+        (int32)PlayerCell,
+        (int32)GS->CurrentTurn);
+
      // Make the move on GameState
-    if (GS->MakeMove(CellIndex, PlayerCell))
+    if (bMoved)
     {
         // SYNC: Update the cell actor's state
         SyncAllCells(); 
