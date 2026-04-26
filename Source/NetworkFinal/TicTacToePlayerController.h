@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "LobbyPlayerState.h" 
 #include "TicTacToePlayerController.generated.h"
 
 UCLASS()

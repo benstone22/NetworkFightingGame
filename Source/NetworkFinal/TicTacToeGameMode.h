@@ -4,6 +4,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "TicTacToeGameState.h"
 #include "TicTacToeCell.h"
+#include "TicTacToePlayerController.h"
 #include "TicTacToeGameMode.generated.h"
 UCLASS()
 class NETWORKFINAL_API ATicTacToeGameMode : public AGameModeBase

@@ -118,11 +118,12 @@ void ATicTacToeGameMode::HandleMove(APlayerController* Player, int32 CellIndex)
         return; // spectators can't move
 
     bool bMoved = GS->MakeMove(CellIndex, PlayerCell);
-    UE_LOG(LogTemp, Warning, TEXT("MakeMove returned: %s, PS=%s, Role=%d, PlayerCell=%d, CurrentTurn=%d"),
-        bMoved ? TEXT("true") : TEXT("false"),
+    UE_LOG(LogTemp, Warning, TEXT("HandleMove: Cell=%d Role=%d PlayerCell=%d CurrentTurn=%d Moved=%s"),
+        CellIndex,
         (int32)PC->PendingRole,
         (int32)PlayerCell,
-        (int32)GS->CurrentTurn);
+        (int32)GS->CurrentTurn,
+        bMoved ? TEXT("true") : TEXT("false"))
 
      // Make the move on GameState
     if (bMoved)
@@ -134,10 +135,10 @@ void ATicTacToeGameMode::HandleMove(APlayerController* Player, int32 CellIndex)
     {
         for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
         {
-            ATicTacToePlayerController* PC = Cast<ATicTacToePlayerController>(It->Get());
-            if (PC)
+            ATicTacToePlayerController* OtherPC = Cast<ATicTacToePlayerController>(It->Get());
+            if (OtherPC)
             {
-                PC->ClientGameOver(GS->Winner);
+                OtherPC->ClientGameOver(GS->Winner);
             }
         }
     }
