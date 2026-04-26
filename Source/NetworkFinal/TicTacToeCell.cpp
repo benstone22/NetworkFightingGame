@@ -52,6 +52,24 @@ void ATicTacToeCell::OnCellClicked(UPrimitiveComponent* TouchedComponent, FKey B
         PC->ServerMakeMove(CellIndex);
     }
 }
+/*void ATicTacToeCell::UpdateVisual(ETicTacToeCell cellState) {
+    if (cellState == ETicTacToeCell::X)
+    {
+        // Set mesh/material for X
+        UE_LOG(LogTemp, Warning, TEXT("Updating cell %d visual to X"), CellIndex);
+		//this-> = "X";
+    }
+    else if (cellState == ETicTacToeCell::O)
+    {
+        // Set mesh/material for O
+        UE_LOG(LogTemp, Warning, TEXT("Updating cell %d visual to O"), CellIndex);
+    }
+    else
+    {
+        // Set mesh/material for empty
+        UE_LOG(LogTemp, Warning, TEXT("Updating cell %d visual to Empty"), CellIndex);
+	}
+}*/
 
 void ATicTacToeCell::OnRep_CellIndex()
 {

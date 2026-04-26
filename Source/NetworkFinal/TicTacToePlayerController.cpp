@@ -16,6 +16,7 @@ void ATicTacToePlayerController::ClientGameOver_Implementation(ETicTacToeCell Wi
     // Display UI widget (Blueprint will show winner)
     // After player clicks "Return to Lobby":
     // ServerReturnToLobby();
+	ServerReturnToLobby();
 }
 
 
