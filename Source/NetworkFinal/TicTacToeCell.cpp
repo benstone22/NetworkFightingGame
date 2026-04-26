@@ -29,7 +29,7 @@ void ATicTacToeCell::BeginPlay()
     CellMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     CellMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
     CellMesh->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
-    CellMesh->OnClicked.AddDynamic(this, &ATicTacToeCell::OnCellClicked);
+    //CellMesh->OnClicked.AddDynamic(this, &ATicTacToeCell::OnCellClicked);
     
     
 }
